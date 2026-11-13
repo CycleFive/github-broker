@@ -1,0 +1,5 @@
+# Copy to .dev.vars for `wrangler dev` (git-ignored). Use a throwaway test app if you can.
+# The PEM can be one line with literal \n sequences.
+GITHUB_APP_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----"
+GITHUB_APP_CLIENT_SECRET="..."
+PUBLIC_URL="http://localhost:8787"

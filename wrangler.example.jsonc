@@ -1,0 +1,38 @@
+// Copy to wrangler.jsonc (git-ignored) and fill in your own values:
+//   cp wrangler.example.jsonc wrangler.jsonc
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "github-broker",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  // Required by the OAuth library for Client ID Metadata Documents (Claude's preferred
+  // way to identify itself): the Worker fetches client-supplied https URLs.
+  "compatibility_flags": [
+    "global_fetch_strictly_public"
+  ],
+  "kv_namespaces": [
+    // Create with: npx wrangler kv namespace create OAUTH_KV, then paste the id here.
+    {
+      "binding": "OAUTH_KV",
+      "id": "<your-kv-namespace-id>"
+    }
+  ],
+  "vars": {
+    // Public origin of this Worker, no trailing slash. The MCP URL is PUBLIC_URL + "/mcp".
+    "PUBLIC_URL": "https://github-broker.<subdomain>.workers.dev",
+    // From the GitHub App's settings page. Not secret.
+    "GITHUB_APP_CLIENT_ID": "<your-app-client-id>",
+    "GITHUB_INSTALLATION_ID": "<your-installation-id>",
+    // Optional: lets tools take "repo": "NAME" instead of "OWNER/NAME".
+    "GITHUB_DEFAULT_OWNER": "",
+    // Who may sign in: GitHub user IDs (preferred, survive renames) or logins.
+    "ALLOWED_GITHUB_USERS": "<your-github-user-id>",
+    // Optional: Origins accepted when a request carries an Origin header.
+    "ALLOWED_ORIGINS": ""
+  },
+  // Secrets, set with `wrangler secret put` (never in this file):
+  //   GITHUB_APP_PRIVATE_KEY, GITHUB_APP_CLIENT_SECRET
+  "observability": {
+    "enabled": true
+  }
+}
