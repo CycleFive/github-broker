@@ -90,7 +90,7 @@ describe("feed entrypoint", () => {
     await feed().call("/api/repos/o/r/issues?state=open&access_token=secret");
     expect(logSpy).toHaveBeenCalledTimes(1);
     const line = JSON.parse(logSpy.mock.calls[0][0] as string);
-    expect(Object.keys(line).sort()).toEqual(["event", "ms", "method", "path", "status"]);
+    expect(Object.keys(line).sort()).toEqual(["event", "method", "ms", "path", "status"]);
     expect(line).toMatchObject({ event: "feed", method: "GET", path: "/api/repos/o/r/issues", status: 200 });
     expect(typeof line.ms).toBe("number");
     expect(line.ms).toBeGreaterThanOrEqual(0);
