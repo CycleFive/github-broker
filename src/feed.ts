@@ -80,6 +80,7 @@ async function route(request: Request, deps: FeedDeps): Promise<Response> {
 }
 
 export async function handleFeed(request: Request, _env: Env, deps: FeedDeps): Promise<Response> {
+  const started = Date.now();
   let res: Response;
   try {
     res = await route(request, deps);
@@ -87,7 +88,7 @@ export async function handleFeed(request: Request, _env: Env, deps: FeedDeps): P
     // Never echo the error: it may carry upstream detail.
     res = json({ error: "upstream unavailable" }, 502);
   }
-  console.log(JSON.stringify({ event: "feed", method: request.method, path: new URL(request.url).pathname, status: res.status }));
+  console.log(JSON.stringify({ event: "feed", method: request.method, path: new URL(request.url).pathname, status: res.status, ms: Date.now() - started }));
   return res;
 }
 

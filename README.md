@@ -161,7 +161,7 @@ URL cannot reach it. It is read-only and fetch-style: send ordinary `Request`s s
 | anything else | `404 {"error": "not found"}` |
 
 It shares the installation token cache with the MCP endpoint, so the private key stays here.
-Each call logs one `{"event":"feed","method","path","status"}` line, never a body or token.
+Each call logs one `{"event":"feed","method","path","status","ms"}` line, never a body or token.
 
 ## Development
 

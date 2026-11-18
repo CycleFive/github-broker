@@ -3,7 +3,7 @@ import type { Env } from "../src/env";
 import { handleFeed } from "../src/feed";
 import { fakeGitHub, jsonRes, toolContext } from "./fake-github";
 
-vi.spyOn(console, "log").mockImplementation(() => {});
+const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 function feed(extra: Parameters<typeof fakeGitHub>[0] = {}) {
   const { fetchImpl, log } = fakeGitHub({
@@ -83,5 +83,16 @@ describe("feed entrypoint", () => {
     const res = await feed().call("/nope");
     expect(res.status).toBe(404);
     expect(await res.json()).toEqual({ error: "not found" });
+  });
+
+  it("writes one audit line per call, with no body or query", async () => {
+    logSpy.mockClear();
+    await feed().call("/api/repos/o/r/issues?state=open&access_token=secret");
+    expect(logSpy).toHaveBeenCalledTimes(1);
+    const line = JSON.parse(logSpy.mock.calls[0][0] as string);
+    expect(Object.keys(line).sort()).toEqual(["event", "ms", "method", "path", "status"]);
+    expect(line).toMatchObject({ event: "feed", method: "GET", path: "/api/repos/o/r/issues", status: 200 });
+    expect(typeof line.ms).toBe("number");
+    expect(line.ms).toBeGreaterThanOrEqual(0);
   });
 });
