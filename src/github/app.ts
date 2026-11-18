@@ -176,3 +176,6 @@ export class InstallationTokenCache {
     return this.#cached;
   }
 }
+
+/** One token cache per isolate, shared by the MCP endpoint and the Feed entrypoint. */
+export const tokens = new InstallationTokenCache();

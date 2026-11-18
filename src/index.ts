@@ -14,20 +14,19 @@ import {
 } from "@cloudflare/workers-oauth-provider";
 import { AuthProps, SCOPE, handleAuthorize, handleCallback, isAllowed, publicUrl } from "./auth";
 import type { Env } from "./env";
-import { InstallationTokenCache } from "./github/app";
+import { tokens } from "./github/app";
 import { GitHubClient } from "./github/client";
 import { handleMcp } from "./mcp";
 
-const VERSION = "0.1.0";
+export { Feed } from "./feed";
+
+const VERSION = "0.2.0";
 
 const INSTRUCTIONS =
   "Tools act as a GitHub App installation, with whatever permissions the app was granted (installation_info shows them). " +
   'Pass repositories as "OWNER/NAME" (or NAME when a default owner is configured). ' +
   "commit_files makes one commit with any number of file changes and never force-pushes. " +
   "github_request reaches any other REST endpoint.";
-
-// One token cache per isolate; installation tokens last an hour.
-const tokens = new InstallationTokenCache();
 
 interface Roles {
   url: string;

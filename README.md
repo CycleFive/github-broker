@@ -145,6 +145,24 @@ included.
   `master`, require PR review, block force-push and branch deletion) still apply to the
   bot. `github_request` is deliberately unrestricted, so those rules are the real limit.
 
+## Internal feed (for mailroom)
+
+The Worker also exports a named entrypoint, `Feed`, for other Workers in the same Cloudflare
+account. It is reachable only through a service binding (`"entrypoint": "Feed"`); the public
+URL cannot reach it. It is read-only and fetch-style: send ordinary `Request`s such as
+`https://feed/identity`. The host name is meaningless, only the path matters.
+
+| Route | Answer |
+|---|---|
+| `GET /identity` | `200 {"id", "login": "<slug>[bot]", "name"}` for the app, cached per isolate |
+| `GET /api/repos/...?query` | GitHub's status and JSON body, unchanged |
+| `GET /api/<anything outside /repos/>` | `403 {"error": "feed reads /repos/ paths only"}` |
+| other methods on `/api/...` | `405 {"error": "feed is read-only"}` |
+| anything else | `404 {"error": "not found"}` |
+
+It shares the installation token cache with the MCP endpoint, so the private key stays here.
+Each call logs one `{"event":"feed","method","path","status"}` line, never a body or token.
+
 ## Development
 
 ```sh
@@ -159,7 +177,7 @@ sign-in: registration → consent → GitHub (faked) → token → MCP calls, wi
 `resource` parameter. GitHub's API is faked at the fetch layer; no test touches a real key.
 
 Layout: `src/index.ts` (routing, OAuth roles), `src/auth.ts` (consent, GitHub sign-in,
-allowlist), `src/mcp.ts` (transport), `src/tools.ts`, `src/github/app.ts` (PEM, JWT, token
+allowlist), `src/mcp.ts` (transport), `src/tools.ts`, `src/feed.ts` (internal feed), `src/github/app.ts` (PEM, JWT, token
 cache), `src/github/client.ts` (REST client).
 
 ## License
