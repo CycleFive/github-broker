@@ -1,5 +1,7 @@
 # github-broker
 
+> **Moved.** This broker now lives in [CycleFive/brokers](https://github.com/CycleFive/brokers/tree/master/brokers/github), with its history. This repository is archived at v0.2.0 and gets no further changes.
+
 A remote MCP server on Cloudflare Workers that lends an MCP client (Claude) a GitHub App
 installation. The app's private key lives only in the Worker's secret store. The client
 never sees the key or the installation token, only tool results.
